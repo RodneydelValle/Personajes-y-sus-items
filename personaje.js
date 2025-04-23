@@ -93,7 +93,8 @@ crearBtn.onclick = async () => {
     desc,
     imageUrl,
     personajeId,
-    creadorUid: currentUser.uid // el que creó el ítem
+    creadorEmail: currentUser.email, // mostrar correo del creador
+    propietarioUid: currentUser.uid   // para control de propiedad actual
   });
 
   nameInput.value = "";
@@ -115,10 +116,10 @@ async function cargarItems() {
       <h3 contenteditable="false">${item.name}</h3>
       <p contenteditable="false">${item.desc}</p>
       <img src="${item.imageUrl}">
-      <small><b>Creador original:</b> ${item.creadorUid}</small><br>
+      <small><b>Creador:</b> ${item.creadorEmail}</small><br>
     `;
 
-    if (currentUser.uid === item.creadorUid || currentUser.uid === (await getDoc(doc(db, "personajes", personajeId))).data().creadorUid) {
+    if (item.propietarioUid === currentUser.uid) {
       const eliminarBtn = document.createElement("button");
       eliminarBtn.textContent = "🗑️";
       eliminarBtn.style.position = "absolute";
@@ -177,8 +178,11 @@ async function cargarItems() {
         btnTransfer.textContent = "Confirmar transferencia";
         btnTransfer.onclick = async () => {
           const nuevoId = select.value;
+          const nuevoPj = await getDoc(doc(db, "personajes", nuevoId));
+          const nuevoUid = nuevoPj.data().creadorUid;
           await updateDoc(doc(db, "items", docData.id), {
-            personajeId: nuevoId
+            personajeId: nuevoId,
+            propietarioUid: nuevoUid
           });
           alert("Ítem transferido");
           cargarItems();
