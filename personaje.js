@@ -43,15 +43,20 @@ const descInput = document.getElementById("itemDesc");
 const imageInput = document.getElementById("itemImage");
 const listaItems = document.getElementById("listaItems");
 
-// Botón de volver
-const backBtn = document.createElement("button");
-backBtn.textContent = "← Volver";
-backBtn.style.position = "fixed";
-backBtn.style.top = "10px";
-backBtn.style.left = "10px";
-backBtn.style.zIndex = "999";
-backBtn.onclick = () => history.back();
-document.body.appendChild(backBtn);
+// Navbar superior con botón volver
+const nav = document.createElement("nav");
+nav.style.position = "fixed";
+nav.style.top = "0";
+nav.style.left = "0";
+nav.style.width = "100%";
+nav.style.background = "#333";
+nav.style.color = "white";
+nav.style.padding = "10px";
+nav.style.zIndex = "1000";
+nav.innerHTML = `<button style="font-size:16px;" onclick="history.back()">← Volver</button>`;
+document.body.prepend(nav);
+
+document.body.style.paddingTop = "60px"; // para no solaparse con el navbar
 
 onAuthStateChanged(auth, async user => {
   if (user) {
@@ -88,7 +93,7 @@ crearBtn.onclick = async () => {
     desc,
     imageUrl,
     personajeId,
-    creadorUid: currentUser.uid
+    creadorUid: currentUser.uid // el que creó el ítem
   });
 
   nameInput.value = "";
@@ -110,17 +115,17 @@ async function cargarItems() {
       <h3 contenteditable="false">${item.name}</h3>
       <p contenteditable="false">${item.desc}</p>
       <img src="${item.imageUrl}">
-      <small><b>Creador:</b> ${item.creadorUid === currentUser.uid ? "Tú" : item.creadorUid}</small><br>
+      <small><b>Creador original:</b> ${item.creadorUid}</small><br>
     `;
 
-    if (item.creadorUid === currentUser.uid) {
+    if (currentUser.uid === item.creadorUid || currentUser.uid === (await getDoc(doc(db, "personajes", personajeId))).data().creadorUid) {
       const eliminarBtn = document.createElement("button");
       eliminarBtn.textContent = "🗑️";
       eliminarBtn.style.position = "absolute";
       eliminarBtn.style.top = "5px";
       eliminarBtn.style.right = "5px";
       eliminarBtn.onclick = async () => {
-        const confirm1 = confirm("ESTAS A PUNTO DE BORRAR UN ITEM");
+        const confirm1 = confirm("ESTÁS A PUNTO DE BORRAR UN ÍTEM");
         if (!confirm1) return;
         const confirm2 = confirm("¿Seguro?");
         if (!confirm2) return;
