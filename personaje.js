@@ -223,3 +223,41 @@ async function getPersonajesDePartida(partidaId) {
   });
   return personajes;
 }
+
+
+
+
+function convertir(origen, destino) {
+  const getValor = id => parseFloat(document.getElementById("valor-" + id)?.value) || 0;
+  const setValor = (id, val) => document.getElementById("valor-" + id).value = Math.floor(val);
+
+  // RELACIÓN DIRECTA: cuántas DESTINO caben en 1 ORIGEN
+  const conversion = {
+    cp: { sp: 0.1 },
+    sp: { cp: 10, ep: 0.2 },
+    ep: { sp: 5, gp: 0.5 },
+    gp: { ep: 2, pp: 0.1 },
+    pp: { gp: 10 }
+  };
+
+  const factor = conversion[origen]?.[destino];
+  if (!factor) return;
+
+  let cantidad = getValor(origen);
+  let convertido = 0;
+
+  if (factor < 1) {
+    // convertir a moneda más valiosa (menos unidades)
+    convertido = Math.floor(cantidad * factor);
+  } else {
+    // convertir a moneda menos valiosa (más unidades)
+    convertido = Math.floor(cantidad * factor);
+  }
+
+  setValor(destino, getValor(destino) + convertido);
+  setValor(origen, 0);
+}
+
+window.convertir = convertir;
+
+

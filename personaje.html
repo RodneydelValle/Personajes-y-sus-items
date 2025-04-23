@@ -2,9 +2,6 @@
 <html lang="es">
 <head>
   <link rel="stylesheet" href="dnd-mobile-style.css">
-<!-- En el <head> de tus HTML -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
   <meta charset="UTF-8">
   <title>Ítems del Personaje</title>
   <script type="module" src="personaje.js" defer></script>
@@ -15,6 +12,62 @@
   </style>
 </head>
 <body>
+
+  <div class="seccion-monedas" style="border: 1px solid #bda27e; padding: 10px; background: #fffaf0; border-radius: 8px; margin-top: 20px;">
+    <h2 style="margin-top: 0;">Monedas</h2>
+  
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+  
+      <!-- REUTILIZABLE PARA CADA MONEDA -->
+      <!-- 1. PLATINO -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 20px; height: 20px; background-image: url('IMAGENES/platino.png'); background-size: cover;"></div>
+
+        <span style="width: 130px;">Pieza de Platino (pp)</span>
+        <input type="number" id="valor-pp" value="0" style="width: 80px;">
+        <button onclick="convertir('pp', 'gp')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬇️</button>
+      </div>
+  
+      <!-- 2. ORO -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 20px; height: 20px; background-image: url('IMAGENES/oro.png'); background-size: cover;"></div>
+        <span style="width: 130px;">Pieza de Oro (gp)</span>
+        <input type="number" id="valor-gp" value="0" style="width: 80px;">
+        <button onclick="convertir('gp', 'pp')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬆️</button>
+        <button onclick="convertir('gp', 'ep')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬇️</button>
+      </div>
+  
+      <!-- 3. ELECTRUM -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 20px; height: 20px; background-image: url('IMAGENES/electro.png'); background-size: cover;"></div>
+        <span style="width: 130px;">Pieza de Electrum (ep)</span>
+        <input type="number" id="valor-ep" value="0" style="width: 80px;">
+        <button onclick="convertir('ep', 'gp')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬆️</button>
+        <button onclick="convertir('ep', 'sp')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬇️</button>
+      </div>
+  
+      <!-- 4. PLATA -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 20px; height: 20px; background-image: url('IMAGENES/plata.png'); background-size: cover;"></div>
+        <span style="width: 130px;">Pieza de Plata (sp)</span>
+        <input type="number" id="valor-sp" value="0" style="width: 80px;">
+        <button onclick="convertir('sp', 'ep')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬆️</button>
+        <button onclick="convertir('sp', 'cp')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬇️</button>
+      </div>
+  
+      <!-- 5. COBRE -->
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 20px; height: 20px; background-image: url('IMAGENES/cobre.png'); background-size: cover;"></div>
+        <span style="width: 130px;">Pieza de Cobre (cp)</span>
+        <input type="number" id="valor-cp" value="0" style="width: 80px;">
+        <button onclick="convertir('cp', 'sp')" style="border: 1px solid black; background: white; width: 25px; height: 25px;">⬆️</button>
+      </div>
+  
+    </div>
+  </div>
+  
+  
+  
   <h1>Ítems del Personaje</h1>
 
   <div id="formCrearItem">
