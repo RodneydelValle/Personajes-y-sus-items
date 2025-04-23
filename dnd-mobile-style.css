@@ -10,15 +10,14 @@ padding-top: 60px;
 }
 
 nav {
-  background-color: #6e4f3a;
-  color: white;
-  padding: 12px 10px;
-  text-align: left;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
+  background-color: #333;
+  color: white;
   z-index: 1000;
+  padding: 10px;
 }
 
 body {
