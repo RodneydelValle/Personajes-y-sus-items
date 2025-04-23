@@ -2,6 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebas
 import {
   getAuth,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
@@ -13,7 +16,6 @@ import {
   getDocs
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-// Configuración Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCbmRcCeN9lMMjjbXwcHUC5OpDXB1w6vLw",
   authDomain: "rol-items.firebaseapp.com",
@@ -22,40 +24,51 @@ const firebaseConfig = {
   messagingSenderId: "479280055836",
   appId: "1:479280055836:web:4c6797b5d154f94e0201d9"
 };
+
+const ADMIN_EMAIL = "thozero@gmail.com";
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// ADMIN UID (puedes usar tu correo si prefieres)
-const ADMIN_EMAIL = "thozero@gmail.com";
-
-// Elementos DOM
+// DOM
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
+const registerBtn = document.getElementById("registerBtn");
+const googleBtn = document.getElementById("googleBtn");
 const crearPartida = document.getElementById("crearPartida");
 const adminPanel = document.getElementById("adminPanel");
 const listaPartidas = document.getElementById("listaPartidas");
 
 let currentUser = null;
 
-// Login
 loginBtn.onclick = () => {
   signInWithEmailAndPassword(auth, email.value, password.value)
     .catch(err => alert("Error: " + err.message));
 };
 
-logoutBtn.onclick = () => {
-  signOut(auth);
+registerBtn.onclick = () => {
+  createUserWithEmailAndPassword(auth, email.value, password.value)
+    .catch(err => alert("Error: " + err.message));
 };
 
-// Detectar login
+googleBtn.onclick = () => {
+  const provider = new GoogleAuthProvider();
+  signInWithPopup(auth, provider)
+    .catch(err => alert("Error con Google: " + err.message));
+};
+
+logoutBtn.onclick = () => signOut(auth);
+
 onAuthStateChanged(auth, async user => {
   if (user) {
     currentUser = user;
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline";
+    registerBtn.style.display = "none";
+    googleBtn.style.display = "none";
 
     if (user.email === ADMIN_EMAIL) {
       adminPanel.style.display = "block";
@@ -68,10 +81,11 @@ onAuthStateChanged(auth, async user => {
     listaPartidas.innerHTML = "";
     loginBtn.style.display = "inline";
     logoutBtn.style.display = "none";
+    registerBtn.style.display = "inline";
+    googleBtn.style.display = "inline";
   }
 });
 
-// Crear partida
 crearPartida.onclick = async () => {
   const nombre = document.getElementById("partidaName").value;
   if (!nombre) return alert("Nombre requerido");
@@ -86,7 +100,6 @@ crearPartida.onclick = async () => {
   loadPartidas();
 };
 
-// Cargar partidas
 async function loadPartidas() {
   listaPartidas.innerHTML = "";
   const partidasSnap = await getDocs(collection(db, "partidas"));
