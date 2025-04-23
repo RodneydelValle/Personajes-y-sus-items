@@ -41,6 +41,7 @@ const googleBtn = document.getElementById("googleBtn");
 const crearPartida = document.getElementById("crearPartida");
 const adminPanel = document.getElementById("adminPanel");
 const listaPartidas = document.getElementById("listaPartidas");
+const userInfo = document.getElementById("userInfo");
 
 let currentUser = null;
 
@@ -70,6 +71,9 @@ onAuthStateChanged(auth, async user => {
     registerBtn.style.display = "none";
     googleBtn.style.display = "none";
 
+    userInfo.style.display = "block";
+    userInfo.textContent = `👋 Bienvenido, ${user.email}`;
+
     if (user.email === ADMIN_EMAIL) {
       adminPanel.style.display = "block";
     }
@@ -83,6 +87,8 @@ onAuthStateChanged(auth, async user => {
     logoutBtn.style.display = "none";
     registerBtn.style.display = "inline";
     googleBtn.style.display = "inline";
+    userInfo.style.display = "none";
+    userInfo.textContent = "";
   }
 });
 
