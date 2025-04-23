@@ -46,15 +46,17 @@ const listaItems = document.getElementById("listaItems");
 const titulo = document.querySelector("h1");
 const formCrearItem = document.getElementById("formCrearItem");
 
-// Navbar superior con botón volver
-
 const topBar = document.createElement("div");
 topBar.style.background = "#333"; // lo tienes
 topBar.style.boxShadow = "0 2px 4px rgba(0,0,0,0.3)"; // agrega esto para que se vea flotante
 
+topBar.innerHTML = `
+  <button style="font-size:16px;" onclick="history.back()">← Volver</button>
+  <div id="extraBtns"></div> <!-- aquí puedes agregar más botones después -->
+`;
 
-
-document.body.style.paddingTop = "60px"; // para no solaparse con el navbar
+document.body.prepend(topBar);
+document.body.style.paddingTop = "60px"; // ajuste para que no tape contenido
 
 onAuthStateChanged(auth, async user => {
   if (user) {
