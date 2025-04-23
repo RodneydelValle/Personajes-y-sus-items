@@ -7,6 +7,7 @@
   <style>
     input, button { display: block; margin: 10px 0; }
     .partida { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    #userInfo { font-weight: bold; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -22,6 +23,8 @@
     <button id="logoutBtn" style="display:none;">Cerrar sesión</button>
   </div>
 
+  <div id="userInfo" style="display:none;"></div>
+
   <div id="adminPanel" style="display:none;">
     <h2>Crear nueva Partida</h2>
     <input type="text" id="partidaName" placeholder="Nombre de la partida">
@@ -30,7 +33,5 @@
 
   <h2>Lista de Partidas</h2>
   <div id="listaPartidas"></div>
-
-  <h2>Lista de Partidas</h2>
 </body>
 </html>
