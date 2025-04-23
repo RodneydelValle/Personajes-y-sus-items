@@ -42,6 +42,7 @@ const nameInput = document.getElementById("itemName");
 const descInput = document.getElementById("itemDesc");
 const imageInput = document.getElementById("itemImage");
 const listaItems = document.getElementById("listaItems");
+const titulo = document.querySelector("h1");
 
 // Navbar superior con botón volver
 const nav = document.createElement("nav");
@@ -64,7 +65,9 @@ onAuthStateChanged(auth, async user => {
 
     const pjDoc = await getDoc(doc(db, "personajes", personajeId));
     if (!pjDoc.exists()) return alert("Personaje no existe");
-    partidaId = pjDoc.data().partidaId;
+    const pjData = pjDoc.data();
+    partidaId = pjData.partidaId;
+    titulo.textContent = `Ítems de ${pjData.nombre}`;
 
     cargarItems();
   } else {
@@ -72,6 +75,9 @@ onAuthStateChanged(auth, async user => {
     location.href = "index.html";
   }
 });
+
+// Resto del código sin cambios relevantes (ya actualizado previamente)
+
 
 crearBtn.onclick = async () => {
   const name = nameInput.value;
