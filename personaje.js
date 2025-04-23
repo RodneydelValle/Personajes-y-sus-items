@@ -36,6 +36,7 @@ const personajeId = params.get("id");
 
 let currentUser = null;
 let partidaId = null;
+let creadorPersonaje = null;
 
 const crearBtn = document.getElementById("crearItem");
 const nameInput = document.getElementById("itemName");
@@ -43,6 +44,7 @@ const descInput = document.getElementById("itemDesc");
 const imageInput = document.getElementById("itemImage");
 const listaItems = document.getElementById("listaItems");
 const titulo = document.querySelector("h1");
+const formCrearItem = document.getElementById("formCrearItem");
 
 // Navbar superior con botón volver
 const nav = document.createElement("nav");
@@ -67,7 +69,14 @@ onAuthStateChanged(auth, async user => {
     if (!pjDoc.exists()) return alert("Personaje no existe");
     const pjData = pjDoc.data();
     partidaId = pjData.partidaId;
+    creadorPersonaje = pjData.creadorUid;
+
     titulo.textContent = `Ítems de ${pjData.nombre}`;
+
+    // Solo mostrar el formulario si es el creador del personaje
+    if (currentUser.uid !== creadorPersonaje) {
+      formCrearItem.style.display = "none";
+    }
 
     cargarItems();
   } else {
@@ -75,6 +84,7 @@ onAuthStateChanged(auth, async user => {
     location.href = "index.html";
   }
 });
+
 
 // Resto del código sin cambios relevantes (ya actualizado previamente)
 
