@@ -90,4 +90,38 @@ h1, h2 {
   h1, h2 {
     font-size: 22px;
   }
+/* Ajustes móviles específicos para centrar y aprovechar mejor el espacio */
+@media (max-width: 768px) {
+  body {
+    padding: 60px 10px 20px; /* espacio para navbar + margen */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  form, #auth, #formCrearPersonaje, #formCrearItem {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .partida, .personaje, .item {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  input, textarea, button {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  h1, h2 {
+    text-align: center;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 }
