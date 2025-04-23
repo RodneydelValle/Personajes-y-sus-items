@@ -35,15 +35,20 @@ const nombreInput = document.getElementById("nombrePersonaje");
 const fotoInput = document.getElementById("fotoPersonaje");
 const listaDiv = document.getElementById("listaPersonajes");
 
-// Botón de volver
-const backBtn = document.createElement("button");
-backBtn.textContent = "← Volver";
-backBtn.style.position = "fixed";
-backBtn.style.top = "10px";
-backBtn.style.left = "10px";
-backBtn.style.zIndex = "999";
-backBtn.onclick = () => history.back();
-document.body.appendChild(backBtn);
+// Navbar superior con botón volver
+const nav = document.createElement("nav");
+nav.style.position = "fixed";
+nav.style.top = "0";
+nav.style.left = "0";
+nav.style.width = "100%";
+nav.style.background = "#333";
+nav.style.color = "white";
+nav.style.padding = "10px";
+nav.style.zIndex = "1000";
+nav.innerHTML = `<button style="font-size:16px;" onclick="history.back()">← Volver</button>`;
+document.body.prepend(nav);
+
+document.body.style.paddingTop = "60px"; // para no solaparse con el navbar
 
 let currentUser = null;
 
