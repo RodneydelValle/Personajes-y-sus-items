@@ -47,17 +47,12 @@ const titulo = document.querySelector("h1");
 const formCrearItem = document.getElementById("formCrearItem");
 
 // Navbar superior con botón volver
-const nav = document.createElement("nav");
-nav.style.position = "fixed";
-nav.style.top = "0";
-nav.style.left = "0";
-nav.style.width = "100%";
-nav.style.background = "#333";
-nav.style.color = "white";
-nav.style.padding = "10px";
-nav.style.zIndex = "1000";
-nav.innerHTML = `<button style="font-size:16px;" onclick="history.back()">← Volver</button>`;
-document.body.prepend(nav);
+
+const topBar = document.createElement("div");
+topBar.style.background = "#333"; // lo tienes
+topBar.style.boxShadow = "0 2px 4px rgba(0,0,0,0.3)"; // agrega esto para que se vea flotante
+
+
 
 document.body.style.paddingTop = "60px"; // para no solaparse con el navbar
 
