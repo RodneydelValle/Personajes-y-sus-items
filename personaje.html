@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ítems del Personaje</title>
+  <script type="module" src="personaje.js" defer></script>
+  <style>
+    input, textarea, button { display: block; margin: 10px 0; width: 300px; }
+    .item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    img { max-width: 200px; display: block; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Ítems del Personaje</h1>
+
+  <div id="formCrearItem">
+    <input type="text" id="itemName" placeholder="Nombre del ítem">
+    <textarea id="itemDesc" placeholder="Descripción del ítem"></textarea>
+    <input type="file" id="itemImage">
+    <button id="crearItem">Crear Ítem</button>
+  </div>
+
+  <h2>Ítems</h2>
+  <div id="listaItems"></div>
+</body>
+</html>

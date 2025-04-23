@@ -1,0 +1,103 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+// Configuración Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCbmRcCeN9lMMjjbXwcHUC5OpDXB1w6vLw",
+  authDomain: "rol-items.firebaseapp.com",
+  projectId: "rol-items",
+  storageBucket: "rol-items.firebasestorage.app",
+  messagingSenderId: "479280055836",
+  appId: "1:479280055836:web:4c6797b5d154f94e0201d9"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ADMIN UID (puedes usar tu correo si prefieres)
+const ADMIN_EMAIL = "thozero@gmail.com";
+
+// Elementos DOM
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const crearPartida = document.getElementById("crearPartida");
+const adminPanel = document.getElementById("adminPanel");
+const listaPartidas = document.getElementById("listaPartidas");
+
+let currentUser = null;
+
+// Login
+loginBtn.onclick = () => {
+  signInWithEmailAndPassword(auth, email.value, password.value)
+    .catch(err => alert("Error: " + err.message));
+};
+
+logoutBtn.onclick = () => {
+  signOut(auth);
+};
+
+// Detectar login
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline";
+
+    if (user.email === ADMIN_EMAIL) {
+      adminPanel.style.display = "block";
+    }
+
+    loadPartidas();
+  } else {
+    currentUser = null;
+    adminPanel.style.display = "none";
+    listaPartidas.innerHTML = "";
+    loginBtn.style.display = "inline";
+    logoutBtn.style.display = "none";
+  }
+});
+
+// Crear partida
+crearPartida.onclick = async () => {
+  const nombre = document.getElementById("partidaName").value;
+  if (!nombre) return alert("Nombre requerido");
+
+  await addDoc(collection(db, "partidas"), {
+    nombre,
+    creador: currentUser.uid,
+    timestamp: new Date()
+  });
+
+  alert("Partida creada");
+  loadPartidas();
+};
+
+// Cargar partidas
+async function loadPartidas() {
+  listaPartidas.innerHTML = "";
+  const partidasSnap = await getDocs(collection(db, "partidas"));
+  partidasSnap.forEach(doc => {
+    const p = doc.data();
+    const div = document.createElement("div");
+    div.classList.add("partida");
+    div.innerHTML = `
+      <strong>${p.nombre}</strong><br>
+      <button onclick="location.href='partida.html?id=${doc.id}'">Ver Personajes</button>
+    `;
+    listaPartidas.appendChild(div);
+  });
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestor de Partidas</title>
+  <script type="module" src="script.js" defer></script>
+  <style>
+    input, button { display: block; margin: 10px 0; }
+    .partida { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Gestor de Partidas</h1>
+
+  <div id="auth">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Contraseña">
+    <button id="loginBtn">Iniciar Sesión</button>
+    <button id="logoutBtn" style="display:none;">Cerrar Sesión</button>
+  </div>
+
+  <div id="adminPanel" style="display:none;">
+    <h2>Crear nueva Partida</h2>
+    <input type="text" id="partidaName" placeholder="Nombre de la partida">
+    <button id="crearPartida">Crear Partida</button>
+  </div>
+
+  <h2>Lista de Partidas</h2>
+  <div id="listaPartidas"></div>
+</body>
+</html>
