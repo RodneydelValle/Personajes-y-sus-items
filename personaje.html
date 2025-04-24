@@ -13,6 +13,7 @@
 </head>
 <body>
 
+
   <div class="seccion-monedas" style="border: 1px solid #bda27e; padding: 10px; background: #fffaf0; border-radius: 8px; margin-top: 20px;">
     <h2 style="margin-top: 0;">Monedas</h2>
   
@@ -66,7 +67,31 @@
     </div>
   </div>
   
-  
+<!-- Botón para guardar -->
+<button onclick="guardarMonedasEnFirebase(personajeId)" style="margin-top: 10px;">💾 Guardar Monedas</button>
+
+<!-- Transferencia de monedas -->
+<h3>Transferir Monedas</h3>
+<div id="formTransferenciaMoneda" style="display: flex; flex-direction: column; gap: 8px; max-width: 300px;">
+  <label>Seleccionar personaje destino:</label>
+  <select id="personajeDestino"></select>
+
+  <label>Tipo de moneda:</label>
+  <select id="tipoMoneda">
+    <option value="cp">Cobre (cp)</option>
+    <option value="sp">Plata (sp)</option>
+    <option value="ep">Electrum (ep)</option>
+    <option value="gp">Oro (gp)</option>
+    <option value="pp">Platino (pp)</option>
+  </select>
+
+  <label>Cantidad:</label>
+  <input type="number" id="cantidadTransferir" placeholder="0" min="1">
+
+  <button onclick="ejecutarTransferencia()">Enviar</button>
+</div>
+
+
   
   <h1>Ítems del Personaje</h1>
 

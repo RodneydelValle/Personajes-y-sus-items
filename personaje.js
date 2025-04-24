@@ -226,12 +226,10 @@ async function getPersonajesDePartida(partidaId) {
 
 
 
-
 function convertir(origen, destino) {
   const getValor = id => parseFloat(document.getElementById("valor-" + id)?.value) || 0;
   const setValor = (id, val) => document.getElementById("valor-" + id).value = Math.floor(val);
 
-  // RELACIÓN DIRECTA: cuántas DESTINO caben en 1 ORIGEN
   const conversion = {
     cp: { sp: 0.1 },
     sp: { cp: 10, ep: 0.2 },
@@ -244,20 +242,152 @@ function convertir(origen, destino) {
   if (!factor) return;
 
   let cantidad = getValor(origen);
+  let destinoActual = getValor(destino);
   let convertido = 0;
 
   if (factor < 1) {
-    // convertir a moneda más valiosa (menos unidades)
+    // Moneda más valiosa (ej. 10 gp → 1 pp)
     convertido = Math.floor(cantidad * factor);
+    if (convertido >= 1) {
+      const consumido = Math.floor(convertido / factor);
+      setValor(destino, destinoActual + convertido);
+      setValor(origen, cantidad - consumido);
+    }
   } else {
-    // convertir a moneda menos valiosa (más unidades)
+    // Moneda menos valiosa (ej. 1 pp → 10 gp)
     convertido = Math.floor(cantidad * factor);
+    if (convertido >= 1) {
+      setValor(destino, destinoActual + convertido);
+      setValor(origen, 0);
+    }
   }
-
-  setValor(destino, getValor(destino) + convertido);
-  setValor(origen, 0);
 }
-
 window.convertir = convertir;
 
 
+//MONEDAS GUARDADAS
+
+async function guardarMonedasEnFirebase(personajeId) {
+  const monedas = {
+    cp: parseInt(document.getElementById("valor-cp").value) || 0,
+    sp: parseInt(document.getElementById("valor-sp").value) || 0,
+    ep: parseInt(document.getElementById("valor-ep").value) || 0,
+    gp: parseInt(document.getElementById("valor-gp").value) || 0,
+    pp: parseInt(document.getElementById("valor-pp").value) || 0,
+  };
+
+  await updateDoc(doc(db, "personajes", personajeId), { monedas });
+  alert("💾 Monedas guardadas");
+}
+
+//TRASNFERENCIA DE MONEDAS
+
+async function transferirMonedas(origenId, destinoId, tipo, cantidad) {
+  const origenRef = doc(db, "personajes", origenId);
+  const destinoRef = doc(db, "personajes", destinoId);
+
+  const origenSnap = await getDoc(origenRef);
+  const destinoSnap = await getDoc(destinoRef);
+
+  const origenData = origenSnap.data();
+  const destinoData = destinoSnap.data();
+
+  if ((origenData.monedas?.[tipo] || 0) < cantidad) {
+    alert("No tienes suficiente " + tipo.toUpperCase());
+    return;
+  }
+
+  // Transferir monedas
+  const nuevasOrigen = { ...origenData.monedas };
+  const nuevasDestino = { ...destinoData.monedas || {} };
+
+  nuevasOrigen[tipo] -= cantidad;
+  nuevasDestino[tipo] = (nuevasDestino[tipo] || 0) + cantidad;
+
+  await updateDoc(origenRef, { monedas: nuevasOrigen });
+  await updateDoc(destinoRef, {
+    monedas: nuevasDestino,
+    historial: [
+      {
+        fecha: new Date(),
+        deNombre: origenData.nombre,
+        deImagen: origenData.imagenUrl || "",
+        tipo,
+        cantidad
+      },
+      ...(destinoData.historial || []).slice(0, 2) // máximo 3
+    ]
+  });
+
+  alert("Transferencia exitosa");
+}
+
+//HISTORIAL DE TRANSFERENCIAS
+
+function mostrarHistorial(historial = []) {
+  const contenedor = document.getElementById("historialTransferencias");
+  contenedor.innerHTML = "";
+
+  historial.slice(0, 3).forEach(entry => {
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.marginBottom = "5px";
+    div.innerHTML = `
+      <img src="${entry.deImagen}" style="width: 20px; height: 20px; border-radius: 50%; margin-right: 6px;">
+      <span><strong>${entry.deNombre}</strong> te envió ${entry.cantidad} ${entry.tipo.toUpperCase()}</span>
+    `;
+    contenedor.appendChild(div);
+  });
+
+
+  // Poblador automático del select de personajes destino
+async function cargarDestinosTransferencia() {
+  const select = document.getElementById("personajeDestino");
+  const personajes = await getPersonajesDePartida(partidaId);
+  personajes.forEach(p => {
+    if (p.id !== personajeId) {
+      const option = document.createElement("option");
+      option.value = p.id;
+      option.textContent = p.nombre;
+      select.appendChild(option);
+    }
+  });
+}
+window.cargarDestinosTransferencia = cargarDestinosTransferencia;
+
+// Llamar al cargar
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    const pjDoc = await getDoc(doc(db, "personajes", personajeId));
+    if (!pjDoc.exists()) return alert("Personaje no existe");
+    const pjData = pjDoc.data();
+    partidaId = pjData.partidaId;
+    creadorPersonaje = pjData.creadorUid;
+    titulo.textContent = `Ítems de ${pjData.nombre}`;
+    if (currentUser.uid !== creadorPersonaje) formCrearItem.style.display = "none";
+    cargarItems();
+    cargarDestinosTransferencia(); // 👈 SE AÑADE AQUÍ
+    mostrarHistorial(pjData.historial || []);
+  } else {
+    alert("Debes iniciar sesión");
+    location.href = "index.html";
+  }
+});
+
+// Ejecutar transferencia
+function ejecutarTransferencia() {
+  const destinoId = document.getElementById("personajeDestino").value;
+  const tipo = document.getElementById("tipoMoneda").value;
+  const cantidad = parseInt(document.getElementById("cantidadTransferir").value);
+
+  if (!destinoId || !tipo || !cantidad || cantidad <= 0) {
+    alert("Datos incompletos o inválidos.");
+    return;
+  }
+
+  transferirMonedas(personajeId, destinoId, tipo, cantidad);
+}
+
+}
