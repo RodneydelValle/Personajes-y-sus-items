@@ -341,7 +341,21 @@ function mostrarHistorial(historial = []) {
   });
 
 
-  // Poblador automático del select de personajes destino
+
+async function cargarDestinosTransferencia() {
+  const select = document.getElementById("personajeDestino");
+  const personajes = await getPersonajesDePartida(partidaId);
+  personajes.forEach(p => {
+    if (p.id !== personajeId) {
+      const option = document.createElement("option");
+      option.value = p.id;
+      option.textContent = p.nombre;
+      select.appendChild(option);
+    }
+  });
+}
+window.cargarDestinosTransferencia = cargarDestinosTransferencia;
+
 async function cargarDestinosTransferencia() {
   const select = document.getElementById("personajeDestino");
   const personajes = await getPersonajesDePartida(partidaId);
@@ -370,6 +384,7 @@ onAuthStateChanged(auth, async user => {
     cargarItems();
     cargarDestinosTransferencia(); // 👈 SE AÑADE AQUÍ
     mostrarHistorial(pjData.historial || []);
+    activarAutoGuardadoMonedas();
   } else {
     alert("Debes iniciar sesión");
     location.href = "index.html";
@@ -390,4 +405,15 @@ function ejecutarTransferencia() {
   transferirMonedas(personajeId, destinoId, tipo, cantidad);
 }
 
+}
+
+
+function activarAutoGuardadoMonedas() {
+  const campos = ["valor-cp", "valor-sp", "valor-ep", "valor-gp", "valor-pp"];
+  campos.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener("change", () => guardarMonedasEnFirebase(personajeId));
+    }
+  });
 }
