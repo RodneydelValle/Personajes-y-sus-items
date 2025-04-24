@@ -34,6 +34,7 @@ const db = getFirestore(app);
 const params = new URLSearchParams(location.search);
 const personajeId = params.get("id");
 
+
 let currentUser = null;
 let partidaId = null;
 let creadorPersonaje = null;
@@ -66,6 +67,7 @@ onAuthStateChanged(auth, async user => {
     if (!pjDoc.exists()) return alert("Personaje no existe");
     const pjData = pjDoc.data();
     partidaId = pjData.partidaId;
+    cargarMonedasDesdeFirebase(personajeId);
     creadorPersonaje = pjData.creadorUid;
 
     titulo.textContent = `Ítems de ${pjData.nombre}`;
@@ -178,6 +180,7 @@ async function cargarItems() {
         transferDiv.innerHTML = "";
         const select = document.createElement("select");
         const personajes = await getPersonajesDePartida(partidaId);
+  console.log("🧪 Personajes encontrados:", personajes);
         personajes.forEach(p => {
           if (p.id !== personajeId) {
             const option = document.createElement("option");
@@ -226,6 +229,7 @@ async function getPersonajesDePartida(partidaId) {
 
 
 
+
 function convertir(origen, destino) {
   const getValor = id => parseFloat(document.getElementById("valor-" + id)?.value) || 0;
   const setValor = (id, val) => document.getElementById("valor-" + id).value = Math.floor(val);
@@ -243,25 +247,26 @@ function convertir(origen, destino) {
 
   let cantidad = getValor(origen);
   let destinoActual = getValor(destino);
-  let convertido = 0;
+  let convertido = Math.floor(cantidad * factor);
 
   if (factor < 1) {
-    // Moneda más valiosa (ej. 10 gp → 1 pp)
-    convertido = Math.floor(cantidad * factor);
+    // de moneda menos valiosa a más valiosa (ej: 10 gp -> 1 pp)
     if (convertido >= 1) {
       const consumido = Math.floor(convertido / factor);
       setValor(destino, destinoActual + convertido);
       setValor(origen, cantidad - consumido);
     }
   } else {
-    // Moneda menos valiosa (ej. 1 pp → 10 gp)
-    convertido = Math.floor(cantidad * factor);
-    if (convertido >= 1) {
+    // de moneda más valiosa a menos valiosa (ej: 1 pp -> 10 gp)
+    if (cantidad > 0) {
       setValor(destino, destinoActual + convertido);
       setValor(origen, 0);
     }
   }
+
+  guardarMonedasEnFirebase(personajeId);
 }
+
 window.convertir = convertir;
 
 
@@ -277,7 +282,7 @@ async function guardarMonedasEnFirebase(personajeId) {
   };
 
   await updateDoc(doc(db, "personajes", personajeId), { monedas });
-  alert("💾 Monedas guardadas");
+  // alert("💾 Monedas guardadas");
 }
 
 //TRASNFERENCIA DE MONEDAS
@@ -292,10 +297,18 @@ async function transferirMonedas(origenId, destinoId, tipo, cantidad) {
   const origenData = origenSnap.data();
   const destinoData = destinoSnap.data();
 
-  if ((origenData.monedas?.[tipo] || 0) < cantidad) {
-    alert("No tienes suficiente " + tipo.toUpperCase());
-    return;
-  }
+  const nombresMonedas = {
+  cp: "cobre",
+  sp: "plata",
+  ep: "electrum",
+  gp: "oro",
+  pp: "platino"
+};
+
+if ((origenData.monedas?.[tipo] || 0) < cantidad) {
+  alert(nombresMonedas[tipo] + " insuficiente");
+  return;
+}
 
   // Transferir monedas
   const nuevasOrigen = { ...origenData.monedas };
@@ -341,24 +354,13 @@ function mostrarHistorial(historial = []) {
   });
 
 
-
+  // Poblador automático del select de personajes destino
 async function cargarDestinosTransferencia() {
+  console.log("🧪 Cargando personajes de la partida...");
+
   const select = document.getElementById("personajeDestino");
   const personajes = await getPersonajesDePartida(partidaId);
-  personajes.forEach(p => {
-    if (p.id !== personajeId) {
-      const option = document.createElement("option");
-      option.value = p.id;
-      option.textContent = p.nombre;
-      select.appendChild(option);
-    }
-  });
-}
-window.cargarDestinosTransferencia = cargarDestinosTransferencia;
-
-async function cargarDestinosTransferencia() {
-  const select = document.getElementById("personajeDestino");
-  const personajes = await getPersonajesDePartida(partidaId);
+  console.log("🧪 Personajes encontrados:", personajes);
   personajes.forEach(p => {
     if (p.id !== personajeId) {
       const option = document.createElement("option");
@@ -384,7 +386,6 @@ onAuthStateChanged(auth, async user => {
     cargarItems();
     cargarDestinosTransferencia(); // 👈 SE AÑADE AQUÍ
     mostrarHistorial(pjData.historial || []);
-    activarAutoGuardadoMonedas();
   } else {
     alert("Debes iniciar sesión");
     location.href = "index.html";
@@ -408,12 +409,76 @@ function ejecutarTransferencia() {
 }
 
 
-function activarAutoGuardadoMonedas() {
-  const campos = ["valor-cp", "valor-sp", "valor-ep", "valor-gp", "valor-pp"];
-  campos.forEach(id => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.addEventListener("change", () => guardarMonedasEnFirebase(personajeId));
+// === GUARDAR MONEDAS AL PRESIONAR EL BOTÓN ===
+document.getElementById("btnGuardarMonedas").onclick = () => {
+  guardarMonedasEnFirebase(personajeId);
+};
+
+
+async function cargarMonedasDesdeFirebase(personajeId) {
+  const pjDoc = await getDoc(doc(db, "personajes", personajeId));
+  if (!pjDoc.exists()) return;
+
+  const monedas = pjDoc.data().monedas || {};
+
+  document.getElementById("valor-cp").value = monedas.cp || 0;
+  document.getElementById("valor-sp").value = monedas.sp || 0;
+  document.getElementById("valor-ep").value = monedas.ep || 0;
+  document.getElementById("valor-gp").value = monedas.gp || 0;
+  document.getElementById("valor-pp").value = monedas.pp || 0;
+}
+
+
+// Botón y tarjetas para transferencia visual de monedas
+const btnTransferirDinero = document.createElement("button");
+btnTransferirDinero.textContent = "💸 Transferir Dinero";
+btnTransferirDinero.style.display = "block";
+btnTransferirDinero.style.margin = "20px auto";
+btnTransferirDinero.style.background = "#a36b4f";
+btnTransferirDinero.style.color = "white";
+btnTransferirDinero.style.padding = "10px 20px";
+btnTransferirDinero.style.border = "none";
+btnTransferirDinero.style.borderRadius = "6px";
+btnTransferirDinero.onclick = async () => {
+  const personajes = await getPersonajesDePartida(partidaId);
+  const contenedor = document.createElement("div");
+  contenedor.style.display = "flex";
+  contenedor.style.flexWrap = "wrap";
+  contenedor.style.gap = "20px";
+  contenedor.style.justifyContent = "center";
+  contenedor.style.marginTop = "20px";
+
+  personajes.forEach(p => {
+    if (p.id !== personajeId) {
+      const tarjeta = document.createElement("div");
+      tarjeta.style.width = "280px";
+      tarjeta.style.border = "1px solid #ccc";
+      tarjeta.style.borderRadius = "8px";
+      tarjeta.style.padding = "10px";
+      tarjeta.style.background = "#fffaf0";
+      tarjeta.innerHTML = `
+        <img src="\${p.imagenUrl}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 6px;">
+        <h3 style="margin: 10px 0;">\${p.nombre}</h3>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <label for="moneda-\${p.id}">Tipo de moneda:</label>
+          <select id="moneda-\${p.id}">
+            <option value="cp">Cobre</option>
+            <option value="sp">Plata</option>
+            <option value="ep">Electrum</option>
+            <option value="gp">Oro</option>
+            <option value="pp">Platino</option>
+          </select>
+          <label for="cantidad-\${p.id}">Cantidad:</label>
+          <input type="number" id="cantidad-\${p.id}" placeholder="Cantidad" min="1">
+          <button style="margin-top: 5px;" onclick="transferirMonedas('\${personajeId}', '\${p.id}', document.getElementById('moneda-\${p.id}').value, parseInt(document.getElementById('cantidad-\${p.id}').value))">Confirmar</button>
+        </div>
+      `;
+      contenedor.appendChild(tarjeta);
     }
   });
-}
+
+  document.body.appendChild(contenedor);
+};
+
+document.querySelector(".seccion-monedas").after(btnTransferirDinero);
+
