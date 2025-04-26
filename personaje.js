@@ -136,10 +136,22 @@ async function cargarItems() {
 
     if (item.propietarioUid === currentUser.uid) {
       const eliminarBtn = document.createElement("button");
-      eliminarBtn.textContent = "🗑️";
+      eliminarBtn.innerHTML = "🗑️";
       eliminarBtn.style.position = "absolute";
       eliminarBtn.style.top = "5px";
       eliminarBtn.style.right = "5px";
+      eliminarBtn.style.width = "24px";
+      eliminarBtn.style.height = "24px";
+      eliminarBtn.style.fontSize = "14px";
+      eliminarBtn.style.lineHeight = "1";
+      eliminarBtn.style.padding = "0";
+      eliminarBtn.style.background = "transparent";
+      eliminarBtn.style.border = "none";
+      eliminarBtn.style.display = "flex";
+      eliminarBtn.style.alignItems = "center";
+      eliminarBtn.style.justifyContent = "center";
+      eliminarBtn.style.cursor = "pointer";
+    
       eliminarBtn.onclick = async () => {
         const confirm1 = confirm("ESTÁS A PUNTO DE BORRAR UN ÍTEM");
         if (!confirm1) return;
@@ -148,7 +160,9 @@ async function cargarItems() {
         await deleteDoc(doc(db, "items", docData.id));
         cargarItems();
       };
+    
       div.appendChild(eliminarBtn);
+    
 
       const editarBtn = document.createElement("button");
       editarBtn.textContent = "Editar";

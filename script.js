@@ -131,43 +131,7 @@ async function loadPartidas() {
     listaPartidas.appendChild(div);
   });
 
-  function convertir(origen, destino) {
-    const valores = {
-      cp: parseInt(document.getElementById("valor-cp").value) || 0,
-      sp: parseInt(document.getElementById("valor-sp").value) || 0,
-      ep: parseInt(document.getElementById("valor-ep").value) || 0,
-      gp: parseInt(document.getElementById("valor-gp").value) || 0,
-      pp: parseInt(document.getElementById("valor-pp").value) || 0,
-    };
-  
-    let factor = 0;
-  
-    // Define factores según la tabla de conversión
-    if (origen === "cp" && destino === "sp") factor = 10;
-    else if (origen === "sp" && destino === "ep") factor = 5;
-    else if (origen === "ep" && destino === "gp") factor = 2;
-    else if (origen === "gp" && destino === "pp") factor = 10;
-  
-    else if (origen === "sp" && destino === "cp") factor = 1 / 10;
-    else if (origen === "ep" && destino === "sp") factor = 1 / 5;
-    else if (origen === "gp" && destino === "ep") factor = 1 / 2;
-    else if (origen === "pp" && destino === "gp") factor = 1 / 10;
-  
-    if (factor > 1) {
-      const convertirCantidad = Math.floor(valores[origen] / factor);
-      valores[origen] -= convertirCantidad * factor;
-      valores[destino] += convertirCantidad;
-    } else if (factor > 0) {
-      const convertirCantidad = valores[origen];
-      valores[origen] = 0;
-      valores[destino] += Math.floor(convertirCantidad * (1 / factor));
-    }
-  
-    // Actualiza los campos
-    for (let tipo in valores) {
-      document.getElementById(`valor-${tipo}`).value = valores[tipo];
-    }
-  }
-  
+
+
   
 }
