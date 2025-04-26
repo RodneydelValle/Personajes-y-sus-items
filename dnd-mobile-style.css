@@ -1,94 +1,260 @@
-/* Estilo general con estética D&D tipo pergamino y tonos tierra */
+/* === ESTILO GENERAL === */
+
 body {
-    font-family: 'Georgia', serif;
-    background: #f4f1e1; /* pergamino claro */
-    color: #3b2f2f;
-    margin: 0;
-    padding: 0 10px 20px;
-    box-sizing: border-box;
-    padding-top: 60px;
-  }
+  font-family: 'Georgia', serif;
+  background: #f4f1e1; /* pergamino claro */
+  color: #3b2f2f;
+  margin: 0;
+  padding: 0 10px 20px;
+  box-sizing: border-box;
+  padding-top: 60px;
+}
+
+.contenedor-principal {
+  max-width: 100%;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  z-index: 1000;
+  padding: 10px;
+}
+
+/* === BOTONES, INPUTS Y TEXTAREAS === */
+
+button {
+  background-color: #a87c5f;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin: 5px auto 0;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  display: block;
+  font-size: 30px;
+}
+
+button:hover {
+  background-color: #8b5e3c;
+}
+
+input, textarea {
+  width: 100%;
+  max-width: 400px; /* 🔥 Controla el ancho máximo */
+
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-family: 'Georgia', serif;
+  background: #fffdf6;
+  box-sizing: border-box;
+  font-size: 30px;
+  margin: auto;
+}
+
+
+/* === ELEMENTOS GENERALES === */
+
+h1, h2 {
+  color: #5b3a29;
+  text-align: center;
+  margin-top: 0;
+  padding-top: 10px;
+  font-family: 'MedievalSharp';
+  font-size: 50px;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+}
+
+.item, .personaje, .partida {
+  background: #fefaf0;
+  border: 1px solid #bda27e;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+/* === BOTÓN ELIMINAR (Ítems) === */
+
+.boton-eliminar {
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.boton-eliminar:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+/* === TARJETAS DE PERSONAJES === */
+
+#listaPersonajes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.tarjeta-personaje {
+  flex: 1 1 calc(48% - 10px); /* 2 tarjetas por fila, ocupando casi todo */
+  max-width: calc(48% - 10px);
+  height: auto;
+  min-height: 24em; /* opcional si quieres altura mínima pareja */
+  background: #fefaf0;
+  border: 0.08em solid #bda27e;
+  border-radius: 0.5em;
+  padding: 0.5em;
+  box-shadow: 0.2em 0.2em 0.4em rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  font-size: 1.1em; /* Agranda todo el contenido */
+}
+
+
+.tarjeta-personaje img {
+  width: 100%;
+  height: 22em;
+  object-fit: cover;
+  border-radius: 0.5em;
+  transform: scaleX(1.2);
+}
+
+
+
+.tarjeta-personaje strong {
+  font-size: 1em;
+  margin: 0.3em 0;
+  color: #5b3a29;
+}
+
+.tarjeta-personaje button {
+  margin-top: auto;
+  margin-bottom: 0.5em;
+  padding: 0.5em 1em;
+  font-size: 0.9em;
+}
+
+/* === LISTA DE ITEMS === */
+
+#listaItems {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+#listaItems .item {
+  flex: 1 1 48%;
+  max-width: 48%;
+  box-sizing: border-box;
+}
+
+/* === SECCIÓN MONEDAS === */
+
+.seccion-monedas {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 15px;
+  background: #fffaf0;
+  border: 1px solid #bda27e;
+  border-radius: 10px;
+}
+
+.seccion-monedas > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.seccion-monedas span {
+  font-size: 16px;
+  text-align: center;
+}
+
+.seccion-monedas input {
+  width: 80px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.seccion-monedas button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.seccion-monedas div[style*="background-image"] {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+/* === RESPONSIVE PARA CELULARES === */
+
+@media (max-width: 768px) {
   
-  nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333;
-    color: white;
-    z-index: 1000;
-    padding: 10px;
-  }
-  
-  body {
-    padding-top: 60px; /* deja espacio para nav fijo */
-  }
-  
-  button {
-    background-color: #a87c5f;
-    color: white;
-    border: none;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    font-family: 'Georgia', serif;
-  }
-  
-  button:hover {
-    background-color: #8b5e3c;
-  }
-  
-  input, textarea {
-    width: 100%;
-    max-width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-family: 'Georgia', serif;
-    background: #fffdf6;
-    box-sizing: border-box;
-  }
-  
-  .item, .personaje, .partida {
+  .tarjeta-personaje {
+    width: 22em; /* antes 19em */
+    height: 26em; /* antes 15em */
+    font-size: 1.2em; /* antes 1em */
     background: #fefaf0;
-    border: 1px solid #bda27e;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  h1, h2 {
-    color: #5b3a29;
+    border: 0.08em solid #bda27e;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    box-shadow: 0.2em 0.2em 0.4em rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     text-align: center;
-    margin-top: 0;
-    padding-top: 10px;
+    overflow: hidden;
   }
   
-  /* Adaptación móvil */
-  @media (max-width: 768px) {
-    body {
-      font-size: 16px;
-      padding: 0 10px 20px;
-    }
-    nav {
-      font-size: 16px;
-      padding: 10px;
-    }
-    button {
-      font-size: 15px;
-      padding: 8px;
-      width: 100%;
-    }
-    input, textarea {
-      font-size: 15px;
-    }
-    h1, h2 {
-      font-size: 22px;
-    }
-    /* Ajustes móviles específicos para centrar y aprovechar mejor el espacio */
- 
+
+  /* Ítems en móvil */
+  #listaItems .item {
+    flex: 1 1 100%;
+    max-width: 100%;
   }
+
+}
+
+@media (max-width: 480px) {
+  #listaPersonajes .tarjeta-personaje {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}

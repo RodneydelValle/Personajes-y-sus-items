@@ -93,7 +93,7 @@ async function cargarPersonajes() {
   snap.forEach(doc => {
     const p = doc.data();
     const div = document.createElement("div");
-    div.className = "personaje";
+    div.className = "tarjeta-personaje";
     div.innerHTML = `
       <img src="${p.imagenUrl}">
       <strong>${p.nombre}</strong><br>
